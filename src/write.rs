@@ -4,8 +4,8 @@ use crate::values::ValuesInner;
 use left_right::{aliasing::Aliased, Absorb};
 
 use std::collections::hash_map::RandomState;
-use std::{fmt, ptr};
 use std::hash::{BuildHasher, Hash};
+use std::{fmt, ptr};
 
 /// A handle that may be used to modify the eventually consistent map.
 ///
@@ -671,7 +671,10 @@ impl<V: ?Sized> PartialEq for Predicate<V> {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         // only compare data, not vtable: https://stackoverflow.com/q/47489449/472927
-        ptr::eq(&*self.0 as *const _ as *const (), &*other.0 as *const _ as *const ())
+        ptr::eq(
+            &*self.0 as *const _ as *const (),
+            &*other.0 as *const _ as *const (),
+        )
     }
 }
 

@@ -661,22 +661,24 @@ fn bigbag() {
 
     let ndistinct = 32;
 
-    let jh = thread::spawn(move || while let Some(map) = r.enter() {
-        if let Some(rs) = map.get(&1) {
-            assert!(rs.len() <= ndistinct * (ndistinct - 1));
-            let mut found = true;
-            for i in 0..ndistinct {
-                if found {
-                    if !rs.contains(&[i][..]) {
-                        found = false;
+    let jh = thread::spawn(move || {
+        while let Some(map) = r.enter() {
+            if let Some(rs) = map.get(&1) {
+                assert!(rs.len() <= ndistinct * (ndistinct - 1));
+                let mut found = true;
+                for i in 0..ndistinct {
+                    if found {
+                        if !rs.contains(&[i][..]) {
+                            found = false;
+                        }
+                    } else {
+                        assert!(!found);
                     }
-                } else {
-                    assert!(!found);
                 }
+                assert_eq!(rs.into_iter().count(), rs.len());
+                drop(map);
+                thread::yield_now();
             }
-            assert_eq!(rs.into_iter().count(), rs.len());
-            drop(map);
-            thread::yield_now();
         }
     });
 
