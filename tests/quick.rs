@@ -1,12 +1,8 @@
 #![cfg(not(miri))]
 
-extern crate evmap;
-
 use evmap::handles::{ReadHandle, WriteHandle};
 
-extern crate quickcheck;
-#[macro_use(quickcheck)]
-extern crate quickcheck_macros;
+use quickcheck_macros::quickcheck;
 
 use quickcheck::Arbitrary;
 use quickcheck::Gen;
@@ -119,7 +115,7 @@ fn do_ops<K, V, S>(
                     values
                         .iter_mut()
                         .position(|value| value == v)
-                        .and_then(|pos| Some(values.swap_remove(pos)))
+                        .map(|pos| values.swap_remove(pos))
                 });
             }
             Refresh => {
